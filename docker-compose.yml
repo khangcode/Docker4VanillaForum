@@ -1,0 +1,27 @@
+version: "3"
+
+services:
+  workspace:
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile
+    container_name: c-vanilla
+    working_dir: /var/www/html
+    ports:
+      - "80:80"
+    volumes:
+        - ./package:/var/www/html
+        - ./docker/nginx_log:/var/log/nginx
+        - ./docker/php-fpm/php-fpm.log:/var/log/php-fpm.log
+        - ./docker/config/app.conf:/etc/nginx/conf.d/app.conf
+    links: 
+        - mysql
+
+  mysql:
+    image: mysql:5.7
+    container_name: c-mysql
+    volumes:
+      - ./docker/mysql/data:/var/lib/mysql
+      - ./docker/mysql/config:/etc/mysql/conf.d
+    environment:
+      MYSQL_ROOT_PASSWORD: password  
